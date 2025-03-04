@@ -46,10 +46,13 @@ CREATE TABLE Collaborations (
 CREATE TABLE Playlists (
     PlaylistID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
+    TrackID INT,
     Creator VARCHAR(255),
     CreationDate DATE,
     Description TEXT,
-    IsPublic BOOLEAN
+    IsPublic BOOLEAN,
+    PlaylistTracks TEXT,
+    FOREIGN KEY (TrackID) REFERENCES Tracks(TrackID)
 );
 CREATE TABLE Genres (
     GenreID INT AUTO_INCREMENT PRIMARY KEY,
