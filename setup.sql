@@ -71,3 +71,13 @@ CREATE TABLE ArtistGenres (
 );
 
 SHOW TABLES; 
+
+INSERT INTO `Artists` (ArtistID, Name, Country, BirthYear, Biography)
+VALUES (10001, "KK", "India", "2004", "hi i am kk");
+
+UPDATE `Artists`
+SET `Biography` = "PES2UG22CS281"
+WHERE `ArtistID` = 10001;
+
+SELECT * FROM `Artists`
+WHERE `ArtistID` = 10001;
