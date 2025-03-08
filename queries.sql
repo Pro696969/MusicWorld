@@ -17,7 +17,7 @@ JOIN `Artists` collaber ON c.`ArtistID` = collaber.`ArtistID`
 WHERE collaber.`Name` = "Laura Williams";
 
 -- Find the Top 10 Most Collaborative Artists
-SELECT a.ArtistID, a.Name, COUNT(c.CollaborationID) AS NumCollaborations
+EXPLAIN ANALYZE SELECT a.ArtistID, a.Name, COUNT(c.CollaborationID) AS NumCollaborations
 FROM Artists a
 JOIN Collaborations c ON a.ArtistID = c.ArtistID
 GROUP BY a.ArtistID, a.Name
@@ -25,7 +25,7 @@ ORDER BY NumCollaborations DESC
 LIMIT 10;
 
 -- Find Albums with the Most Collaborations
-EXPLAIN ANALYZE SELECT al.AlbumID, al.Title, al.MainArtistID, COUNT(c.CollaborationID) AS MaxCOllabs
+EXPLAIN ANALYZE SELECT al.AlbumID, al.Title, al.MainArtistID, COUNT(c.CollaborationID) AS MaxCollabs
 FROM `Albums` al
 JOIN `Tracks` t ON t.`AlbumID` = al.`AlbumID`
 JOIN `Collaborations` c ON c.`TrackID` = t.`TrackID`
@@ -49,6 +49,8 @@ SHOW INDEXES FROM `Collaborations`;
 
 SELECT t.TrackID, t.Title, a.Name AS MainArtist, c.Role
 FROM Artists collaber
+
+-- Bunch Of Optimizationzzz 
 
 -- Start with the Most Selective Join for i)
 EXPLAIN ANALYZE 
@@ -83,3 +85,29 @@ LEFT JOIN Artists collaber ON c.`ArtistID` = collaber.`ArtistID` AND collaber.`N
 JOIN Albums al ON t.AlbumID = al.AlbumID
 JOIN Artists a ON al.`MainArtistID` = a.`ArtistID`;
 
+SELECT *
+FROM `Tracks` t
+JOIN `Albums` al ON t.`AlbumID` = al.`AlbumID`
+JOIN `Artists` a ON al.`MainArtistID` = a.`ArtistID`
+JOIN `Collaborations` c ON t.`TrackID` = c.`TrackID`
+JOIN `Artists` collaber ON c.`ArtistID` = collaber.`ArtistID`
+WHERE collaber.`Name` = "Laura Williams";
+
+EXPLAIN ANALYZE SELECT a.ArtistID, a.Name, COUNT(c.CollaborationID) AS NumCollaborations
+FROM Artists a
+JOIN Collaborations c ON a.ArtistID = c.ArtistID
+GROUP BY a.ArtistID, a.Name
+ORDER BY COUNT(c.CollaborationID) DESC
+LIMIT 10;
+
+EXPLAIN ANALYZE 
+SELECT al.AlbumID, al.Title, al.MainArtistID, MaxCollabs
+FROM Albums al
+JOIN (
+    SELECT t.AlbumID, COUNT(c.CollaborationID) AS MaxCollabs
+    FROM Tracks t
+    JOIN Collaborations c ON c.TrackID = t.TrackID
+    GROUP BY t.AlbumID
+) AS collabCounts ON al.AlbumID = collabCounts.AlbumID
+ORDER BY MaxCollabs DESC 
+LIMIT 10;
